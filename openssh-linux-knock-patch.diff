@@ -5,7 +5,7 @@ diff -Nur openssh-6.7p1/readconf.c openssh-6.7p1.tcpstealth/readconf.c
  #ifdef HAVE_UTIL_H
  #include <util.h>
  #endif
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +#define TCP_STEALTH_SECRET_SIZE 64
 +#endif
  
@@ -15,7 +15,7 @@ diff -Nur openssh-6.7p1/readconf.c openssh-6.7p1.tcpstealth/readconf.c
  	oCanonicalDomains, oCanonicalizeHostname, oCanonicalizeMaxDots,
  	oCanonicalizeFallbackLocal, oCanonicalizePermittedCNAMEs,
  	oStreamLocalBindMask, oStreamLocalBindUnlink,
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +	oTCPStealthSecret,
 +#endif
  	oIgnoredUnknownOption, oDeprecated, oUnsupported
@@ -25,7 +25,7 @@ diff -Nur openssh-6.7p1/readconf.c openssh-6.7p1.tcpstealth/readconf.c
  	{ "streamlocalbindmask", oStreamLocalBindMask },
  	{ "streamlocalbindunlink", oStreamLocalBindUnlink },
  	{ "ignoreunknown", oIgnoreUnknown },
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +	{ "tcpstealthsecret", oTCPStealthSecret },
 +#endif
  
@@ -35,7 +35,7 @@ diff -Nur openssh-6.7p1/readconf.c openssh-6.7p1.tcpstealth/readconf.c
  		intptr = &options->fwd_opts.streamlocal_bind_unlink;
  		goto parse_flag;
  
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +	case oTCPStealthSecret:
 +		charptr = &options->tcp_stealth_secret;
 +
@@ -59,7 +59,7 @@ diff -Nur openssh-6.7p1/readconf.c openssh-6.7p1.tcpstealth/readconf.c
  	options->canonicalize_max_dots = -1;
  	options->canonicalize_fallback_local = -1;
  	options->canonicalize_hostname = -1;
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +	options->tcp_stealth_secret = NULL;
 +#endif
  }
@@ -72,7 +72,7 @@ diff -Nur openssh-6.7p1/readconf.h openssh-6.7p1.tcpstealth/readconf.h
  	struct allowed_cname permitted_cnames[MAX_CANON_DOMAINS];
  
  	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +	char	*tcp_stealth_secret;
 +#endif
  }       Options;
@@ -81,12 +81,11 @@ diff -Nur openssh-6.7p1/readconf.h openssh-6.7p1.tcpstealth/readconf.h
 diff -Nur openssh-6.7p1/servconf.c openssh-6.7p1.tcpstealth/servconf.c
 --- openssh-6.7p1/servconf.c	2014-07-18 06:11:26.000000000 +0200
 +++ openssh-6.7p1.tcpstealth/servconf.c	2014-12-21 22:20:39.071000000 +0100
-@@ -33,6 +33,11 @@
+@@ -33,6 +33,10 @@
  #ifdef HAVE_UTIL_H
  #include <util.h>
  #endif
-+#ifdef HAVE_TCP_STEALTH
-+#define TCP_STEALTH     26
++#ifdef TCP_STEALTH
 +#define TCP_STEALTH_INTEGRITY_LEN       28
 +#define TCP_STEALTH_SECRET_SIZE 64
 +#endif
@@ -97,7 +96,7 @@ diff -Nur openssh-6.7p1/servconf.c openssh-6.7p1.tcpstealth/servconf.c
  	options->ip_qos_interactive = -1;
  	options->ip_qos_bulk = -1;
  	options->version_addendum = NULL;
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +	options->tcp_stealth_secret = NULL;
 +#endif
  }
@@ -107,7 +106,7 @@ diff -Nur openssh-6.7p1/servconf.c openssh-6.7p1.tcpstealth/servconf.c
  	sAuthenticationMethods, sHostKeyAgent, sPermitUserRC,
  	sStreamLocalBindMask, sStreamLocalBindUnlink,
  	sAllowStreamLocalForwarding,
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +	sTCPStealthSecret,
 +#endif
  	sDeprecated, sUnsupported
@@ -117,7 +116,7 @@ diff -Nur openssh-6.7p1/servconf.c openssh-6.7p1.tcpstealth/servconf.c
  	{ "streamlocalbindmask", sStreamLocalBindMask, SSHCFG_ALL },
  	{ "streamlocalbindunlink", sStreamLocalBindUnlink, SSHCFG_ALL },
  	{ "allowstreamlocalforwarding", sAllowStreamLocalForwarding, SSHCFG_ALL },
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +	{ "tcpstealthsecret", sTCPStealthSecret },
 +#endif
  	{ NULL, sBadOption, 0 }
@@ -127,7 +126,7 @@ diff -Nur openssh-6.7p1/servconf.c openssh-6.7p1.tcpstealth/servconf.c
  	case sStreamLocalBindUnlink:
  		intptr = &options->fwd_opts.streamlocal_bind_unlink;
  		goto parse_flag;
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +	case sTCPStealthSecret:
 +		charptr = &options->tcp_stealth_secret;
  
@@ -155,7 +154,7 @@ diff -Nur openssh-6.7p1/servconf.h openssh-6.7p1.tcpstealth/servconf.h
  	u_int	num_auth_methods;
  	char   *auth_methods[MAX_AUTH_METHODS];
 +
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +	char	*tcp_stealth_secret;
 +#endif
  }       ServerOptions;
@@ -165,7 +164,7 @@ diff -Nur openssh-6.7p1/servconf.h openssh-6.7p1.tcpstealth/servconf.h
   * NB. an option must appear in servconf.c:copy_set_server_options() or
   * COPY_MATCH_STRING_OPTS here but never both.
   */
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +#define M_CP_STEALTHSCRT(X)	M_CP_STROPT(X);
 +#else
 +#define M_CP_STEALTHSCRT(X)	
@@ -254,7 +253,7 @@ diff -Nur openssh-6.7p1/ssh.c openssh-6.7p1.tcpstealth/ssh.c
  extern int muxserver_sock;
  extern u_int muxclient_command;
  
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +#define OPT_STEALTH	"[-z tcp_stealth_secret] "
 +#define GETOPT_STEALTH	"z:"
 +#define TCP_STEALTH_SECRET_SIZE	64
@@ -288,7 +287,7 @@ diff -Nur openssh-6.7p1/ssh.c openssh-6.7p1.tcpstealth/ssh.c
  		case 'F':
  			config = optarg;
  			break;
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +		case 'z':
 +			options.tcp_stealth_secret =
 +				xcalloc(TCP_STEALTH_SECRET_SIZE + 1, sizeof(u_int8_t));
@@ -340,12 +339,11 @@ diff -Nur openssh-6.7p1/ssh_config.5 openssh-6.7p1.tcpstealth/ssh_config.5
 diff -Nur openssh-6.7p1/sshconnect.c openssh-6.7p1.tcpstealth/sshconnect.c
 --- openssh-6.7p1/sshconnect.c	2014-07-18 06:11:26.000000000 +0200
 +++ openssh-6.7p1.tcpstealth/sshconnect.c	2014-12-21 22:20:39.081000000 +0100
-@@ -40,6 +40,10 @@
+@@ -40,6 +40,9 @@
  #include <stdlib.h>
  #include <string.h>
  #include <unistd.h>
-+#ifdef HAVE_TCP_STEALTH
-+#define TCP_STEALTH     26
++#ifdef TCP_STEALTH
 +#define TCP_STEALTH_SECRET_SIZE 64
 +#endif
  
@@ -355,7 +353,7 @@ diff -Nur openssh-6.7p1/sshconnect.c openssh-6.7p1.tcpstealth/sshconnect.c
  	}
  	fcntl(sock, F_SETFD, FD_CLOEXEC);
  
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +	if (options.tcp_stealth_secret) {
 +		if (setsockopt(sock, IPPROTO_TCP, TCP_STEALTH,
 +			       options.tcp_stealth_secret,
@@ -443,12 +441,11 @@ diff -Nur openssh-6.7p1/sshd.8 openssh-6.7p1.tcpstealth/sshd.8
 diff -Nur openssh-6.7p1/sshd.c openssh-6.7p1.tcpstealth/sshd.c
 --- openssh-6.7p1/sshd.c	2014-08-26 20:11:55.000000000 +0200
 +++ openssh-6.7p1.tcpstealth/sshd.c	2014-12-21 22:20:39.084000000 +0100
-@@ -930,6 +930,17 @@
+@@ -930,6 +930,16 @@
  	return (r < p) ? 1 : 0;
  }
  
-+#ifdef HAVE_TCP_STEALTH
-+#define TCP_STEALTH     26
++#ifdef TCP_STEALTH
 +#define TCP_STEALTH_INTEGRITY_LEN       28
 +#define TCP_STEALTH_SECRET_SIZE 64
 +#define OPT_STEALTH	" [-z tcp_stealth_secret]"
@@ -474,7 +471,7 @@ diff -Nur openssh-6.7p1/sshd.c openssh-6.7p1.tcpstealth/sshd.c
  		if (setsockopt(listen_sock, SOL_SOCKET, SO_REUSEADDR,
  		    &on, sizeof(on)) == -1)
  			error("setsockopt SO_REUSEADDR: %s", strerror(errno));
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +		if (options.tcp_stealth_secret != NULL) {
 +			if (setsockopt(listen_sock, IPPROTO_TCP, TCP_STEALTH,
 +			    options.tcp_stealth_secret,
@@ -500,7 +497,7 @@ diff -Nur openssh-6.7p1/sshd.c openssh-6.7p1.tcpstealth/sshd.c
  				exit(1);
  			free(line);
  			break;
-+#ifdef HAVE_TCP_STEALTH
++#ifdef TCP_STEALTH
 +		case 'z':
 +			options.tcp_stealth_secret =
 +				xcalloc(TCP_STEALTH_SECRET_SIZE + 1, sizeof(u_int8_t));

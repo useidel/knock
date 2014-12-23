@@ -15,7 +15,7 @@ The patch for the Linux OpenSSH got more changes. Please follow this procedure t
 $ tar xjz </path/to/openssh-6.7p1.tar.gz>
 $ cd openssh-6.7p1
 $ patch -p1 < </path/to/openssh-linux-knock-patch.diff>
-$ export CFLAGS=" -DHAVE_TCP_STEALTH"
+$ export CFLAGS=" -DHAVE_TCP_STEALTH=26"
 $ ./configure
 $ make
 $ make install 
