@@ -5,7 +5,7 @@ This repo contains a few files which were originally from http://gnunet.org/knoc
 
 # Kernel patch
 
-The patch for the kernel actually works now with 3.18. The one on the project website was built against 3.18rc3.
+The patch for the kernel actually works now with some newer kernels, e.g. 3.18, 3.19. The one on the project website was built against 3.18rc3.
 
 # OpenSSH (for Linux) patch
 
